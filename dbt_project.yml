@@ -2,7 +2,7 @@ name: 'projet_cc'
 version: '1.0.0'
 config-version: 2
 
-profile: 'Project CC'
+profile: 'project_cc'
 
 model-paths: ["models"]
 test-paths: ["tests"]
