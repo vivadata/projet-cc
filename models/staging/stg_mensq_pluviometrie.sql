@@ -1,6 +1,7 @@
 -- remove RR_ME column due to 98.6% of NULL values
 -- parse date AAAAMM
 -- extract year and month from AAAAMM
+-- remove lines where quality codes = 2 (= not validated)
 
 SELECT 
     NUM_POSTE,
@@ -20,3 +21,5 @@ SELECT
     NBJRR50,
     NBJRR100 
 FROM {{ source('data_meteofrance', 'MENSQ_974_1900-2025') }}
+WHERE QRR != 2
+AND QRRAB != 2
