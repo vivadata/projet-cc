@@ -1,8 +1,9 @@
+-- remove RR_ME column due to 98.6% of NULL values
+
 SELECT 
   RR,
   QRR,
   NBRR,
-  RR_ME,
   RRAB,
   QRRAB,
   RRABDAT,
