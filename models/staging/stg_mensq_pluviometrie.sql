@@ -1,19 +1,22 @@
 -- remove RR_ME column due to 98.6% of NULL values
 -- parse date AAAAMM
+-- extract year and month from AAAAMM
 
 SELECT 
-  NUM_POSTE,
-  PARSE_DATE('%Y%m%d',CONCAT(AAAAMM,'01'))
-  RR,
-  QRR,
-  NBRR,
-  RRAB,
-  QRRAB,
-  RRABDAT,
-  NBJRR1,
-  NBJRR5,
-  NBJRR10,
-  NBJRR30,
-  NBJRR50,
-  NBJRR100 
-from {{ source('data_meteofrance', 'MENSQ_974_1900-2025') }}
+    NUM_POSTE,
+    PARSE_DATE('%Y%m%d', CONCAT(AAAAMM,'01')) AS AAAAMM,
+    EXTRACT(YEAR FROM PARSE_DATE('%Y%m%d', CONCAT(AAAAMM,'01'))) AS ANNEE,
+    EXTRACT(MONTH FROM PARSE_DATE('%Y%m%d', CONCAT(AAAAMM,'01'))) AS MOIS,    
+    RR,
+    QRR,
+    NBRR,
+    RRAB,
+    QRRAB,
+    RRABDAT,
+    NBJRR1,
+    NBJRR5,
+    NBJRR10,
+    NBJRR30,
+    NBJRR50,
+    NBJRR100 
+FROM {{ source('data_meteofrance', 'MENSQ_974_1900-2025') }}
