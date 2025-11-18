@@ -1,6 +1,8 @@
 -- remove RR_ME column due to 98.6% of NULL values
 
 SELECT 
+  NUM_POSTE,
+  AAAAMM,
   RR,
   QRR,
   NBRR,
