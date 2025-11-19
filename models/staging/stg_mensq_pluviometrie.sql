@@ -2,6 +2,7 @@
 -- parse date AAAAMM
 -- extract year and month from AAAAMM
 -- remove lines where quality codes = 2 (= not validated)
+-- exclude data before 1952 because data is very sparse
 
 SELECT 
     NUM_POSTE,
@@ -23,3 +24,4 @@ SELECT
 FROM {{ source('data_meteofrance', 'MENSQ_974_1900-2025') }}
 WHERE QRR != 2
 AND QRRAB != 2
+AND ANNEE >= 1952
