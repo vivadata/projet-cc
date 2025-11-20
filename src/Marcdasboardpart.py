@@ -8,12 +8,6 @@ import pandas as pd
 # Initialiser le client BigQuery
 client = bigquery.Client()
 
-st.set_page_config(
-    page_title="Climat de la réunion",
-    page_icon=":soleil_et_pluie:",
-    layout="wide",
-)
-
 # Sélecteurs Streamlit
 # annee = st.selectbox("Choisir une année", [1952, 1953, 1954])  # ou générer dynamiquement
 # region = st.selectbox("Choisir une région climatique", ["BSh", "Aw", "Am", "Af", "Cwa", "Cfa", "Cwb", "Cfb"])

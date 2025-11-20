@@ -6,6 +6,10 @@ Plotly
 # Data Science
 scikit-learn
 
+# Database
+sqlalchemy
+sqlalchemy-bigquery
+
 # Web
 streamlit
 requests
