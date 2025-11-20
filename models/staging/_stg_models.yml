@@ -1,0 +1,54 @@
+version: 1
+
+models:
+  - name: stg_mens_temperatures
+    description: "Données mensuelles de températures pour La Réunion."
+    columns:
+      - name: AAAAMM
+        description: "Date représentant l'année et le mois (colonne parsée depuis le format AAAAMM, de type DATE)."
+        tests:
+          - not_null
+          - is_valid_date
+      - name: ANNEE
+        tests:
+          - not_null
+          - test_annee
+      - name: MOIS
+        tests:
+          - not_null
+          - test_mois
+      - name: QTX
+        tests:
+          - not_null
+      - name: QTXAB
+        tests:
+          - not_null
+      - name: QTXMIN
+        tests:
+          - not_null
+      - name: QTN
+        tests:
+          - not_null
+      - name: QTNAB
+        tests:
+          - not_null
+      - name: QTNMAX
+        tests:
+          - not_null
+      - name: QTAMPLIM
+        tests:
+          - not_null
+      - name: QTAMPLIAB
+        tests:
+          - not_null
+      - name: QTMM
+        tests:
+          - not_null
+      - name: QTMMIN
+        tests:
+          - not_null
+      - name: QTMMAX
+        tests:
+          - not_null
+    tests:
+      - test_q_codes

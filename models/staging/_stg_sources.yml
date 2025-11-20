@@ -5,4 +5,4 @@ sources:
     database: "{{ env_var('DBT_PROJECT_ID') }}"
     schema: data_meteofrance
     tables:
-      - name: DECADQ_974_1900-1949
+      - name: MENSQ_974_1900-2025
