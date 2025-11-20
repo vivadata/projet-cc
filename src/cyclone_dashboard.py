@@ -103,12 +103,12 @@ mois_labels = {
     1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril', 5: 'Mai', 6: 'Juin',
     7: 'Juillet', 8: 'Août', 9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
 }
+
 # dropdown multiselect avec checkbox pour le choix des mois
 mois_selectionnes = st.sidebar.multiselect(
-    "Choix du mois", list(mois_labels.values()),
-    #options=list(mois_labels.keys()),
-    #value=list(mois_labels.keys()),
-    #format_func=lambda x: mois_labels[x],
+    "Choix du mois",
+    list(mois_labels.values()),
+    default=list(mois_labels.values()) # sélectionner de tous les mois par défaut
 )
 
 # Filtre par intensité (nombre de jours >100mm)
@@ -241,3 +241,15 @@ st.dataframe(
 # Footer
 st.markdown("---")
 st.markdown("*Données: Météo France - Critère de détection: Mois avec plus de 1 jour de précipitations >100mm*")
+
+
+
+# Création de la 1ere page Overview
+
+st.title("Page de présentation du projet")
+st.markdown("### Vue générale du projet")
+    
+st.radio("Choix Zoom vue", ["Option 1", "Option 2", "Option 3"], horizontal=True)
+
+st.plotly_chart(go.Figure(), use_container_width=True)
+    
