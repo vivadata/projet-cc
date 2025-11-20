@@ -9,3 +9,11 @@ models:
         tests:
           - not_null
           - is_valid_date
+      - name: ANNEE
+        tests:
+          - not_null
+          - test_annee
+      - name: MOIS
+        tests:
+          - not_null
+          - test_mois
