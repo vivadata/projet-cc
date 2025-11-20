@@ -5,7 +5,7 @@ models:
     description: "Données mensuelles de températures pour La Réunion."
     columns:
       - name: AAAAMM
-        description: "Année et mois au format AAAAMM."
+        description: "Date représentant l'année et le mois (colonne parsée depuis le format AAAAMM, de type DATE)."
         tests:
           - not_null
           - is_valid_date

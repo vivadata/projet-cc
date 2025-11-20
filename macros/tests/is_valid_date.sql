@@ -3,8 +3,7 @@
 
 select *
 from {{ model }}
-where {{ column_name }} is null
-   or {{ column_name }} < date('1900-01-01')
+where {{ column_name }} < date('1900-01-01')
    or {{ column_name }} > date('2100-12-31')
 
 {% endtest %}
