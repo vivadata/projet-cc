@@ -1,37 +1,35 @@
-# Projet : Analyse du Climat à La Réunion
+# Projet-CC : Analyse du climat à La Réunion
 
-Ce dépôt contient le code, les transformations et la documentation nécessaires pour analyser les données climatiques de La Réunion, depuis l’ingestion des données brutes jusqu’à la création d’un dashboard interactif dans Looker Studio.
+Ce dépôt contient le code, les transformations et la documentation nécessaires pour analyser les données climatiques de La Réunion, depuis l’ingestion des données brutes jusqu’à la création d’un dashboard interactif avec Streamlit.
 
-Le projet repose sur BigQuery et dbt pour assurer un pipeline analytique propre, testé et maintenable.
+Le projet repose sur BigQuery et dbt pour assurer un pipeline analytique propre, testé (en cours 👀) et maintenable.
 
 ## Objectifs du projet
 
 Explorer les données climatiques officielles de La Réunion.
 
-Nettoyer, normaliser et valider les données via dbt.
+Nettoyer et valider les données via dbt.
 
 Produire des tables analytiques prêtes à être visualisées.
 
-Alimenter un tableau de bord Looker Studio permettant d’explorer :
+Alimenter un tableau de bord Streamlit permettant d’explorer :
 
-les précipitations,
-
-la fréquence des événements extrêmes,
-
-les tendances historiques (par station, altitude, région climatique, etc.).
+- les températures,
+- les précipitations,
+- la fréquence des événements extrêmes,
+- les tendances historiques (par région climatique, etc.).
 
 ## Architecture du projet
 project-root/
-├── data/                     # Données brutes ou échantillons (si applicables)
+├── data/                     # Données brutes générées (à conserver ?)
 ├── dbt/
 │   ├── models/
 │   │   ├── staging/          # Nettoyage, typage, qualité minimale
 │   │   ├── intermediate/     # Jointures, enrichissements, transformations
-│   │   └── marts/            # Tables finales utilisées par Looker Studio
+│   │   └── marts/            # Tables finales utilisées par Streamlit
 │   ├── tests/                # Tests de qualité dbt (unique, not null, etc.)
 │   └── macros/               # Macros dbt personnalisées
-├── bigquery/                 # Requêtes SQL utilisées en analyse exploratoire
-├── dashboard/                # Documentation liée au dashboard Looker Studio
+├── dashboard/                # Documentation liée au dashboard Streamlit
 └── README.md
 
 ## Dépendances principales
