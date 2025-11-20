@@ -16,7 +16,8 @@ SELECT
     -- Nombre de jours > 100mm
     AVG(NBJRR100) AS Nb_Jours_Sup_100mm
 
-FROM `cc-reunion.data_meteofrance.stg_mensq_pluviometrie`
+FROM {{ ref('stg_mensq_pluviometrie') }} t
+
 -- Indispensable pour fusionner les données de toutes les stations par mois
 GROUP BY 
     ANNEE, 
