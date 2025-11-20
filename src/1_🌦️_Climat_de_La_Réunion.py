@@ -1,6 +1,6 @@
 import streamlit as st
 
-from data.bigquery import get_todo1
+from data_layer.bigquery import get_todo1
 
 st.set_page_config(
     page_title="Climat de La Réunion",
