@@ -5,16 +5,20 @@ import plotly.express as px
 import plotly.graph_objects as go
 from google.oauth2 import service_account
 import os
+from streamlit_option_menu import option_menu
+
+
+
 
 # Configuration de la page
 st.set_page_config(
-    page_title="Cyclones à La Réunion",
+    page_title="Projet CC",
     page_icon="🌀",
     layout="wide"
 )
 
 # Titre principal
-st.title("🌀 Impact des Cyclones Tropicaux à La Réunion")
+st.title("Overview ")
 st.markdown("### Détection et analyse des événements cycloniques basés sur les précipitations extrêmes")
 
 # Initialiser la connexion BigQuery avec SQLAlchemy
@@ -99,11 +103,12 @@ mois_labels = {
     1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril', 5: 'Mai', 6: 'Juin',
     7: 'Juillet', 8: 'Août', 9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
 }
+# dropdown multiselect avec checkbox pour le choix des mois
 mois_selectionnes = st.sidebar.multiselect(
-    "Mois",
-    options=list(mois_labels.keys()),
-    format_func=lambda x: mois_labels[x],
-    default=list(mois_labels.keys())
+    "Choix du mois", list(mois_labels.values()),
+    #options=list(mois_labels.keys()),
+    #value=list(mois_labels.keys()),
+    #format_func=lambda x: mois_labels[x],
 )
 
 # Filtre par intensité (nombre de jours >100mm)
