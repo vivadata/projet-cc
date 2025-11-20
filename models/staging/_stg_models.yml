@@ -1,0 +1,11 @@
+version: 1
+
+models:
+  - name: stg_mens_temperatures
+    description: "Données mensuelles de températures pour La Réunion."
+    columns:
+      - name: AAAAMM
+        description: "Année et mois au format AAAAMM."
+        tests:
+          - not_null
+          - is_valid_date
