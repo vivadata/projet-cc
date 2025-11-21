@@ -51,6 +51,53 @@ def get_todo1():
         WHERE Nb_Jours_Sup_100mm > 1
     """)
 
+def get_data():
+    return run_query("""
+                     SELECT ANNEE, moy_nuits_ge_20 
+                     FROM `cc-reunion.data_meteofrance.int_mensq_temperatures_sup_20deg`
+                     ORDER BY ANNEE ASC
+    """)
+
+def get_nb_moy_nuits_sup_20deg():
+    return run_query("""
+                     SELECT ANNEE, AVG(moy_nuits_ge_20) as nb_moy_nuits_sup_20deg
+                     FROM `cc-reunion.data_meteofrance.int_mensq_temperatures_sup_20deg`
+                     GROUP BY ANNEE
+                     ORDER BY ANNEE ASC
+    """)
+
+def get_nb_moy_nuits_sup_20deg_par_zone_par_annee():
+    return run_query("""
+        WITH nuit_par_station AS (
+        SELECT
+            t.NUM_POSTE,
+            sz.Z_GEO,
+            t.ANNEE,
+            SUM(t.NBJTNS20) AS nuits_ge_20_par_station
+        FROM `cc-reunion.data_meteofrance.stg_mensq_temperatures` t
+        JOIN `cc-reunion.MENS_meteofrance.stations_zones` sz
+            ON t.NUM_POSTE = sz.NUM_POSTE
+        GROUP BY t.NUM_POSTE, sz.Z_GEO, t.ANNEE
+        ),
+
+        par_zone AS (
+        SELECT
+            ANNEE,
+            Z_GEO,
+            COUNT(*) AS nb_stations,
+            AVG(nuits_ge_20_par_station) AS moy_nuits_ge_20
+        FROM nuit_par_station
+        GROUP BY ANNEE, Z_GEO
+        )
+
+        SELECT
+            ANNEE,
+            Z_GEO AS zone_geographique,
+            moy_nuits_ge_20,
+            nb_stations
+        FROM par_zone
+        ORDER BY zone_geographique, ANNEE
+    """)
 def get_table_histo_simu():
     return run_query(f"""
                      SELECT *

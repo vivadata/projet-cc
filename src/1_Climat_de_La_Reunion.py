@@ -7,7 +7,7 @@ import geojson
 import os
 from pathlib import Path
 
-from data_layer.bigquery import get_table
+from data_layer.bigquery import get_data, get_table, get_todo1
 
 st.set_page_config(
     page_title="Climat de La Réunion",
