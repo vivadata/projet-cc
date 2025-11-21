@@ -1,6 +1,6 @@
 import streamlit as st
 
-from data_layer.bigquery import get_todo1
+from data_layer.bigquery import get_data, get_todo1
 
 st.set_page_config(
     page_title="Climat de La Réunion",
@@ -9,6 +9,7 @@ st.set_page_config(
 )
 st.header("Températures annuelles")
 
-df = get_todo1()
 
-st.dataframe(df)
+df2 = get_data()
+
+st.line_chart(df2, x="ANNEE", y="moy_nuits_ge_20")
