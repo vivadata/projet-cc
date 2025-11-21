@@ -56,7 +56,7 @@ def get_todo1():
 # --- Requête SQL ---
 # La requête SQL reste inchangée, elle récupère toutes les données annuelles agrégées par zone.
 def get_annuelles_par_zone():
-    return ("""
+    return run_query("""
 WITH CTE AS (
 SELECT
     t1.ANNEE,
