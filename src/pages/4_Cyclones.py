@@ -1,18 +1,9 @@
 import streamlit as st
 import plotly.express as px
-import plotly.graph_objects as go
-from google.cloud import bigquery
 import pandas as pd
-from config.constants import data_sinistres_cyclone, get_mois_labels, get_mois_labels_short
+from config.constants import data_sinistres_cyclone, get_mois_labels
 import re
-
-from data_layer.bigquery import get_detection_precip_superieure100mm, get_table_pluie_extreme
-
-
-# Initialiser le client BigQuery
-client = bigquery.Client()
-
-# Requête SQL
+from data_layer.bigquery import get_detection_precip_superieure100mm
 
 
 # Exécuter la requête et récupérer le dataframe
@@ -114,7 +105,7 @@ fig1 = px.scatter(
     color='Cumul_MAxi_par_mois',
     hover_data=['annee', 'mois', 'Cumul_Mensuel_Pluie_Total', 'Cumul_MAxi_par_mois'],
     title="Nombre de jours avec cumul de précipitation >100mm  par mois",
-    subtitle="Bulle = Intensité mensuelle des précipitions",
+    subtitle="Bulle = Intensité mensuelle des précipitations",
     labels={
         'date_key': 'Date',
         'Nb_Jours_Sup_100mm': 'Nombre de jours avec >100mm',
@@ -201,7 +192,7 @@ st.markdown("*Données: Météo France - Critère de détection: Mois avec plus 
 #     df_pie_chart_pluie_extreme_long,
 #     x='year',
 #     y='Valeur',
-#     color='Statut_Alerte_Vent',  # La couleur est déterminée par le statut d'alerte en fonction de la vitesse du vente
+#     color='Statut_Alerte_Vent',  # La couleur est déterminée par le statut d'alerte en fonction de la vitesse du vent
 #     symbol='Métrique',      # Utilise un symbole différent pour distinguer FXIAB et RR
 #     color_discrete_map=color_map,
 #     title='Événements de Pluviométrie (RRMX) et Vent (NBJFXI3S16X) avec Seuils d\'Alerte',
