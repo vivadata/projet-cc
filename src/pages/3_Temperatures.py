@@ -103,6 +103,11 @@ fig.update_layout(
     legend_title="Zones",
     hovermode="x unified"
 )
+fig.update_layout(
+    title=dict(
+        font=dict(size=24)
+    )
+)
 
 st.plotly_chart(fig, use_container_width=True)
 
@@ -138,19 +143,33 @@ df_plot["couleur"] = df_plot["ecart_moy"].apply(lambda x: "red" if x > 0 else "b
 # Création de la colonne couleur pour le graphique
 df_plot["couleur"] = df_plot["ecart_moy"].apply(lambda x: "Chaud" if x > 0 else "Froid")
 
-# Définir explicitement les couleurs via color_discrete_map
-color_map = {"Chaud": "red", "Froid": "blue"}
+# Couleurs personnalisées
+color_map = {
+    "Chaud": "#EF654D",  # rouge personnalisé
+    "Froid": "#4D8EEF"   # bleu personnalisé
+}
 
 fig = px.bar(
     df_plot,
     x="ANNEE",
     y="ecart_moy",
-    color="couleur",      # maintenant contient "Chaud"/"Froid"
+    color="couleur", # contient "Chaud" / "Froid"
     facet_col="groupe",
     color_discrete_map=color_map,
     labels={"ecart_moy": "Écart à la moyenne", "ANNEE": "Année"},
-    title="Écarts du nombre moyen de nuits ≥20°C par groupe"
+    title="Écarts à la moyenne du nombre moyen de nuits ≥20°C par zone géographique",
 )
 
+fig.update_layout(
+    title=dict(
+        font=dict(size=24)
+    )
+)
 fig.add_hline(y=0, line_dash="dash", line_color="black")
+fig.for_each_annotation(
+    lambda a: a.update(
+        text=a.text.split("=")[1],
+        font=dict(size=18) # augmenter la taille des titres de facettes ("Zones côtières", "Zones montagneuses")
+    )
+)
 st.plotly_chart(fig, use_container_width=True)
