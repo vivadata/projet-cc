@@ -4,6 +4,8 @@ import plotly.express as px
 import pydeck as pdk
 import numpy as np
 import geojson
+import os
+from pathlib import Path
 
 from data_layer.bigquery import get_table
 
@@ -50,12 +52,17 @@ with col1:
     view_state = pdk.ViewState(
         latitude=LATITUDE,
         longitude=LONGITUDE,
-        zoom=8.8,
+        zoom=8,
         pitch=0 # angle de vue
     )
 
     # Couche GeoJSON pour afficher les polygones
-    filepath = '/home/chloe_radice/code/chloe-radice/projet-cc/src/zones_climatiques.geojson'
+
+
+    # __file__ = chemin du fichier Python courant
+    BASE_DIR = Path(__file__).resolve().parent
+    filepath = BASE_DIR / "zones_climatiques.geojson"
+    print("---------", filepath)
     with open(filepath, 'r') as file:
         geojson_data = geojson.load(file)
 
