@@ -50,3 +50,15 @@ def get_todo1():
         FROM CTE
         WHERE Nb_Jours_Sup_100mm > 1
     """)
+
+def get_table_histo_simu():
+    return run_query(f"""
+                     SELECT *
+                     FROM `cc-reunion.data_meteofrance.histo_simu_ann`
+    """)
+
+def get_table(tab_name):
+    return run_query(f"""
+                     SELECT *
+                     FROM `{tab_name}`
+    """)
