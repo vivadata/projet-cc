@@ -1,10 +1,11 @@
 # Fichier : Température_Maximale_Réunion.py
 
 # Importations nécessaires
-from google.cloud import bigquery
 import streamlit as st
 import pandas as pd
 import altair as alt
+
+from data_layer.bigquery import get_annuelles_par_zone
 
 ## Configuration de la page Streamlit
 st.set_page_config(
@@ -15,45 +16,12 @@ st.set_page_config(
 
 st.title("☀️ Analyse des Jours de Forte Chaleur à La Réunion")
 
-# --- Initialisation du client BigQuery ---
-client = bigquery.Client()
 
-# --- Requête SQL ---
-# La requête SQL reste inchangée, elle récupère toutes les données annuelles agrégées par zone.
-query = """
-WITH CTE AS (
-SELECT
-    t1.ANNEE,
-    t2.Z_CLIM,
-    t2.Z_GEO,
-    AVG(t1.total_jours_sup_32c_annuel) AS moyenne_jours_chauds_zone,
-    COUNT(DISTINCT t1.NUM_POSTE) AS nombre_stations_incluses
-FROM 
-    `cc-reunion.MENS_meteofrance.Table_NBJTXS32_ANNEE` AS t1
-INNER JOIN
-    `cc-reunion.MENS_meteofrance.stations` AS t2
-    ON t1.NUM_POSTE = t2.NUM_POSTE
-GROUP BY 
-    t1.ANNEE,
-    t2.Z_CLIM,
-    t2.Z_GEO
-)
-SELECT
-    ANNEE,
-    Z_CLIM,
-    Z_GEO,
-    moyenne_jours_chauds_zone,
-    nombre_stations_incluses
-FROM CTE
-ORDER BY 
-    ANNEE,
-    Z_CLIM;
-"""
 
 # --- Fonction de chargement des données (avec cache) ---
 @st.cache_data
 def load_data():
-    df = client.query(query).to_dataframe()
+    df = get_annuelles_par_zone()
     # Conversion de l'année en datetime pour la série temporelle
     df['ANNEE_DATE'] = pd.to_datetime(df['ANNEE'], format='%Y')
     # Conversion de l'année en numérique/int pour le curseur
