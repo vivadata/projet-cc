@@ -1,18 +1,9 @@
 import streamlit as st
 import plotly.express as px
-import plotly.graph_objects as go
-from google.cloud import bigquery
 import pandas as pd
-from config.constants import data_sinistres_cyclone, get_mois_labels, get_mois_labels_short
+from config.constants import data_sinistres_cyclone, get_mois_labels
 import re
-
-from data_layer.bigquery import get_detection_precip_superieure100mm, get_table_pluie_extreme
-
-
-# Initialiser le client BigQuery
-client = bigquery.Client()
-
-# Requête SQL
+from data_layer.bigquery import get_detection_precip_superieure100mm
 
 
 # Exécuter la requête et récupérer le dataframe
