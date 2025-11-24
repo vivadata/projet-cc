@@ -101,11 +101,12 @@ with col1:
 # B. DEUXIÈME COLONNE : GRAPHIQUES DE SÉRIES TEMPORELLES
 # ----------------------------------------------------
 df_data = get_table(tab_name = 'cc-reunion.data_meteofrance.histo_simu_geo')
-#df_data = df_data[df_data.year <= 2025]
+df_data = df_data[df_data.year <= 2025]
 df_data = df_data.sort_values(by='year', ascending=True)
 
 with col2:
-    st.subheader("Variations annuelles de 1953 à nos jours et projections")
+    st.subheader("Variations annuelles de 1953 à nos jours")
+    height = 400
     
     # --- 1. GRAPHIQUE DES TEMPÉRATURES MOYENNES (TMM) ---
     
@@ -119,7 +120,7 @@ with col2:
         color_discrete_map=COULEURS_ZONES,
         template='plotly_white'
     )
-    fig_tmm.update_layout(height=300)
+    fig_tmm.update_layout(height=height)
     st.plotly_chart(fig_tmm, use_container_width=True)
 
     # --- 2. GRAPHIQUE DES PRÉCIPITATIONS ANNUELLES ---
@@ -134,5 +135,5 @@ with col2:
         color_discrete_map=COULEURS_ZONES,
         template='plotly_white'
     )
-    fig_precip.update_layout(height=300)
+    fig_precip.update_layout(height=height)
     st.plotly_chart(fig_precip, use_container_width=True)

@@ -50,7 +50,7 @@ try:
     )
     
     # Sélecteur de zone climatique
-    zones_uniques = ['Toutes les zones'] + sorted(data_temp['Z_CLIM'].unique().tolist())
+    zones_uniques = ['Toutes les zones'] + sorted(data_temp['Z_GEO'].unique().tolist())
     zone_selectionnee = st.sidebar.selectbox(
         "Sélectionnez une Zone Climatique :", 
         zones_uniques
@@ -61,7 +61,7 @@ try:
     
     # DataFrame pour la Série Temporelle (filtré uniquement par Z_CLIM)
     if zone_selectionnee != 'Toutes les zones':
-        df_serie_temporelle = data_temp[data_temp['Z_CLIM'] == zone_selectionnee]
+        df_serie_temporelle = data_temp[data_temp['Z_GEO'] == zone_selectionnee]
     else:
         df_serie_temporelle = data_temp.copy()
         
@@ -105,10 +105,10 @@ try:
         # Utilisation de :T pour Temporel
         x=alt.X('ANNEE_DATE:T', title='Année'),
         y=alt.Y('moyenne_jours_chauds_zone:Q', title='Moyenne Jours > 32°C'),
-        color='Z_CLIM:N', 
+        color='Z_GEO:N', 
         tooltip=[
             alt.Tooltip('ANNEE_DATE:T', title='Année', format='%Y'), 
-            'Z_CLIM', 
+            'Z_GEO', 
             alt.Tooltip('moyenne_jours_chauds_zone:Q', format='.1f', title='Jours Chauds')
         ]
     ).properties(
@@ -121,14 +121,14 @@ try:
     st.subheader("Comparaison : Jours Chauds Moyens par Zone (Toute la Période)")
     
     # Calcul de la moyenne sur toute la période pour chaque zone
-    df_comparaison = data_temp.groupby('Z_CLIM')['moyenne_jours_chauds_zone'].mean().reset_index()
-    df_comparaison.columns = ['Z_CLIM', 'T_moyenne_periode']
+    df_comparaison = data_temp.groupby('Z_GEO')['moyenne_jours_chauds_zone'].mean().reset_index()
+    df_comparaison.columns = ['Z_GEO', 'T_moyenne_periode']
 
     chart_bar = alt.Chart(df_comparaison).mark_bar().encode(
         x=alt.X('T_moyenne_periode:Q', title='Moyenne Jours > 32°C (Période Totale)'),
-        y=alt.Y('Z_CLIM:N', sort='-x', title='Zone Climatique'),
-        color=alt.Color('Z_CLIM:N', legend=None),
-        tooltip=['Z_CLIM', alt.Tooltip('T_moyenne_periode:Q', format='.1f', title='Moyenne Jours Chauds')]
+        y=alt.Y('Z_GEO:N', sort='-x', title='Zone Climatique'),
+        color=alt.Color('Z_GEO:N', legend=None),
+        tooltip=['Z_GEO', alt.Tooltip('T_moyenne_periode:Q', format='.1f', title='Moyenne Jours Chauds')]
     ).properties(
         title='Zones les plus exposées à la chaleur extrême (Moyenne 1950-2024)'
     ).interactive()

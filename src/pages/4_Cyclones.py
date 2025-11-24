@@ -23,7 +23,7 @@ st.markdown("### Détection et analyse des événements cycloniques basés sur l
 
 
 # Filtres interactifs
-st.sidebar.header("🎛️ Filtres")
+# st.sidebar.header("🎛️ Filtres")
 
 # Filtre par plage d'années
 # annees_disponibles = sorted(df_pie_chart_full['annee'].unique())
@@ -38,11 +38,11 @@ st.sidebar.header("🎛️ Filtres")
 
 
 # dropdown multiselect avec checkbox pour le choix des mois
-mois_selectionnes = st.sidebar.multiselect(
-    "Choix du mois",
-    list(get_mois_labels().values()),
-    default=list(get_mois_labels().values()) # sélectionner de tous les mois par défaut
-)
+# mois_selectionnes = st.sidebar.multiselect(
+#     "Choix du mois",
+#     list(get_mois_labels().values()),
+#     default=list(get_mois_labels().values()) # sélectionner de tous les mois par défaut
+# )
 
 # Filtre par intensité (nombre de jours >100mm)
 # min_jours = st.sidebar.number_input(
