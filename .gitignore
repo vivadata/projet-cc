@@ -1,6 +1,7 @@
 # Sensitive or -high-volume files
 secrets/
 data/
+.streamlit/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
