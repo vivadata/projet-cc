@@ -5,9 +5,15 @@ import json
 # Crée et met en cache le client BigQuery à partir du secret
 @st.cache_resource
 def get_bq_client():
-    service_account_info = json.loads(st.secrets["bigquery"]["service_account_json"])
-    client = bigquery.Client.from_service_account_info(service_account_info)
-    return client
+    try:
+        service_account_info = json.loads(st.secrets["bigquery"]["service_account_json"])
+        client = bigquery.Client.from_service_account_info(service_account_info)
+        return client
+    except KeyError:
+        raise KeyError("Missing 'bigquery.service_account_json' in Streamlit secrets. Please configure secrets.toml")
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in service_account_json secret: {e}")
+
 
 # Requête SQL (utilise le client mis en cache)
 @st.cache_data
