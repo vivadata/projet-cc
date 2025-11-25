@@ -20,10 +20,13 @@ charset-normalizer==3.4.4
     # via requests
 click==8.3.0
     # via streamlit
+geojson
 gitdb==4.0.12
     # via gitpython
 gitpython==3.1.45
     # via streamlit
+google-cloud-bigquery
+google-auth
 greenlet==3.2.4
     # via sqlalchemy
 idna==3.11
@@ -84,11 +87,13 @@ rpds-py==0.28.0
     #   referencing
 six==1.17.0
     # via python-dateutil
+shapely
 smmap==5.0.2
     # via gitdb
 sqlalchemy==2.0.44
     # via -r requirements.in
 streamlit==1.51.0
+streamlit_option_menu==0.4.0
     # via
     #   -r requirements.in
     #   streamlit-option-menu
