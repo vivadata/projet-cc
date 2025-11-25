@@ -9,6 +9,8 @@ Ce dépôt contient le code, les transformations et la documentation nécessaire
 
 Le projet repose sur **BigQuery** et **dbt** pour assurer un pipeline analytique structuré, testé et maintenable.
 
+(lien dans la section *Dashboard*)
+
 ---
 
 ## Objectifs
@@ -107,9 +109,7 @@ Le dashboard Streamlit permet d’explorer :
 - Événements extrêmes
 - Prévisions futures
 
-[Ajouter liens/pages spécifiques]
-
-Lien vers le dashboard : (à compléter)
+Lien vers le dashboard : https://projet-cc.streamlit.app/
 
 ## Tests dbt
 
