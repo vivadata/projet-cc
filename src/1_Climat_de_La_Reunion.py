@@ -6,7 +6,6 @@ import numpy as np
 import geojson
 import os
 from pathlib import Path
-
 from data_layer.bigquery import get_data, get_table, get_todo1
 
 st.set_page_config(

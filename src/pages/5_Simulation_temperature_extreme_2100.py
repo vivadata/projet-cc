@@ -1,10 +1,11 @@
 # Fichier : Simulation_temperature_extreme_2100_Reunion.py
 
 # Importations nécessaires
-from google.cloud import bigquery
 import streamlit as st 
 import pandas as pd
 import altair as alt
+
+from data_layer.bigquery import get_projection_2100
 
 ## Configuration de la page Streamlit
 st.set_page_config(
@@ -15,83 +16,13 @@ st.set_page_config(
 
 st.title("🌡️ Simulation des Jours de Forte Chaleur à La Réunion en 2100 (Projection 2100)")
 
-# --- Initialisation du client BigQuery ---
-client = bigquery.Client() # 🚨 CORRECTION : Initialisation du client
 
-# --- Requête SQL (Version Statique 2100) ---
-# La requête a été simplifiée et corrigée pour ne calculer que la projection en 2100.
-query = """
-WITH T_OBS_REF AS (
-    -- 1. CALCUL DE LA BASELINE OBSERVÉE PAR STATION (Moyenne 1991-2020)
-    SELECT
-        t1.NUM_POSTE,
-        t2.Z_CLIM,
-        t2.Z_GEO,
-        AVG(t1.total_jours_sup_32c_annuel) AS baseline_jours_chauds_ref
-    FROM
-        `cc-reunion.MENS_meteofrance.Table_NBJTXS32_ANNEE` AS t1
-    INNER JOIN
-        `cc-reunion.MENS_meteofrance.stations` AS t2 
-        ON t1.NUM_POSTE = t2.NUM_POSTE
-    WHERE
-        t1.ANNEE BETWEEN '1991' AND '2020' 
-    GROUP BY
-        t1.NUM_POSTE, t2.Z_CLIM, t2.Z_GEO
-),
-
-T_PROJ_AGR AS (
-    -- 2. CALCUL DU DELTA MOYEN PAR ZONE UNIQUEMENT POUR L'ANNÉE 2100
-    SELECT
-        t2.Scenario, 
-        t2.Z_GEO, 
-        AVG(t2.NBJTXS32) AS delta_jours_chauds_moyen_2100
-    FROM
-        `cc-reunion.MENS_meteofrance.Table_sim_2100` AS t2 
-    WHERE
-        EXTRACT(YEAR FROM t2.date_2100) = 2100 
-    GROUP BY 
-        t2.Scenario, t2.Z_GEO
-)
-
--- 3. JOINTURE FINALE ET CALCUL DE LA PROJECTION STATIQUE (HORIZON 2100)
-SELECT
-    2100 AS ANNEE_HORIZON, 
-    T_PROJ.Scenario,
-    T_ST.Z_CLIM,
-    T_PROJ.Z_GEO,
-    
-    -- Calcul du centroïde de la zone
-    AVG(T_ST.LAT) AS latitude_centre,
-    AVG(T_ST.LON) AS longitude_centre,
-    
-    -- Projection = Baseline Moyenne de Zone + Delta 2100
-    AVG(T_OBS_REF.baseline_jours_chauds_ref) AS baseline_jours_chauds_zone,
-    AVG(T_OBS_REF.baseline_jours_chauds_ref) + T_PROJ.delta_jours_chauds_moyen_2100 AS jours_chauds_projete_2100,
-    T_PROJ.delta_jours_chauds_moyen_2100 AS delta_projection_2100 
-    
-FROM
-    T_PROJ_AGR AS T_PROJ
-INNER JOIN
-    `cc-reunion.MENS_meteofrance.stations` AS T_ST 
-    ON T_PROJ.Z_GEO = T_ST.Z_GEO
-INNER JOIN
-    T_OBS_REF 
-    ON T_ST.NUM_POSTE = T_OBS_REF.NUM_POSTE
-    
-GROUP BY
-    T_PROJ.Scenario,
-    T_ST.Z_CLIM,
-    T_PROJ.Z_GEO,
-    T_PROJ.delta_jours_chauds_moyen_2100
-ORDER BY
-    T_ST.Z_CLIM, T_PROJ.Scenario;
-"""
 
 # --- Fonction de chargement des données (avec cache) ---
 @st.cache_data
 def load_data():
     # Exécute la requête SQL et retourne le DataFrame
-    df = client.query(query).to_dataframe()
+    df = get_projection_2100()
     return df
 
 try:
