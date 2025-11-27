@@ -55,9 +55,6 @@ with col1:
         pitch=0 # angle de vue
     )
 
-    # Couche GeoJSON pour afficher les polygones
-
-
     # __file__ = chemin du fichier Python courant
     BASE_DIR = Path(__file__).resolve().parent
     filepath = BASE_DIR / "zones_climatiques.geojson"
@@ -65,6 +62,7 @@ with col1:
     with open(filepath, 'r') as file:
         geojson_data = geojson.load(file)
 
+    # Couche GeoJSON pour afficher les polygones
     geojson_layer = pdk.Layer(
         'GeoJsonLayer',
         geojson_data,
@@ -82,10 +80,10 @@ with col1:
     )
     
     st.pydeck_chart(pdk.Deck(
-        map_style='mapbox://styles/mapbox/light-v9',
+        map_style=None,
         initial_view_state=view_state,
         layers=[geojson_layer],
-    # NOUVEL AJOUT : Configuration du tooltip
+        # NOUVEL AJOUT : Configuration du tooltip
         # L'objet {Zone} fait référence à la propriété "Zone" du GeoJSON feature
         tooltip={
             "html": "<b>Micro-climat :</b> {Zone}",
