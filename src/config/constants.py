@@ -27,3 +27,17 @@ def get_mois_labels():
         1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril', 5: 'Mai', 6: 'Juin',
         7: 'Juillet', 8: 'Août', 9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
     }
+
+def get_couleurs_zones():
+    return {
+        'AV_H': '#009E73', 
+        'SV_H': '#0072B2',
+        'AV_C': '#D55E00',
+        'SV_C': '#F0E442'
+    }
+
+def get_coordonnees_reunion():
+    # Coordonnées centrales de La Réunion, approximativement
+    LATITUDE = -21.114533
+    LONGITUDE = 55.532062
+    return [LATITUDE, LONGITUDE]

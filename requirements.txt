@@ -21,9 +21,11 @@ charset-normalizer==3.4.4
 click==8.3.0
     # via streamlit
 db-dtypes==1.3.0
+folium==0.20.0
 geojson
 gitdb==4.0.12
     # via gitpython
+streamlit-folium==0.25.3
 gitpython==3.1.45
     # via streamlit
 google-cloud-bigquery
