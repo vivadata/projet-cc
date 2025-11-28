@@ -38,6 +38,6 @@ def get_couleurs_zones():
 
 def get_coordonnees_reunion():
     # Coordonnées centrales de La Réunion, approximativement
-    LATITUDE = -21.114533
-    LONGITUDE = 55.532062
-    return [LATITUDE, LONGITUDE]
+    latitude = -21.114533
+    longitude = 55.532062
+    return [latitude, longitude]
