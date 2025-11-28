@@ -45,7 +45,7 @@ def highlight_function(feature):
 BASE_DIR = Path(__file__).resolve().parent
 filepath = BASE_DIR / "zones_climatiques.geojson"
 
-with open(filepath, 'r') as file:
+with open(filepath, 'r', encoding='utf-8') as file:
     geojson_data = geojson.load(file)
 
 # Division de la page en deux colonnes
