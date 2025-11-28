@@ -76,7 +76,7 @@ with col1:
     ).add_to(m)
 
     # Affichage de la carte dans Streamlit
-    # `use_container_width=True`` est essentiel pour que la carte puisse s'afficher correctement
+    # `use_container_width=True` est essentiel pour que la carte puisse s'afficher correctement
     # en s'adaptant à la largeur de la colonne
     st_folium(m, use_container_width=True, height=400)
 
