@@ -27,7 +27,7 @@ Le projet repose sur **BigQuery** et **dbt** pour assurer un pipeline analytique
 ---
 
 ## Architecture du projet
-
+```
 project-root/
 ├── data/ # Données brutes (à conserver ?)
 ├── dbt/
@@ -39,6 +39,7 @@ project-root/
 │ └── macros/ # Macros dbt personnalisées
 ├── dashboard/ # Documentation du dashboard Looker Studio
 └── README.md
+```
 
 ---
 
