@@ -24,9 +24,10 @@ st.title("🏝️ Le climat à La Réunion")
 # Fonction de style pour les zones climatiques
 def style_function(feature):
     zone = feature['properties'].get('Zone')
+    couleurs = get_couleurs_zones()
     return {
-        "fillColor": get_couleurs_zones().get(zone, "#808080"),
-        "color": get_couleurs_zones().get(zone, "#000000"),
+        "fillColor": couleurs.get(zone, "#808080"),
+        "color": couleurs.get(zone, "#000000"),
         "weight": 2,
         "fillOpacity": 0.4,
     }
