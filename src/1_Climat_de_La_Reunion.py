@@ -1,12 +1,12 @@
 import streamlit as st
-import pandas as pd
 import plotly.express as px
-import pydeck as pdk
-import numpy as np
 import geojson
-import os
 from pathlib import Path
-from data_layer.bigquery import get_data, get_table, get_todo1
+from config.constants import get_coordonnees_reunion, get_couleurs_zones
+from data_layer.bigquery import get_table
+import folium
+from streamlit_folium import st_folium
+
 
 st.set_page_config(
     page_title="Climat de La Réunion",
@@ -16,26 +16,43 @@ st.set_page_config(
 
 st.title("🏝️ Le climat à La Réunion")
 
+
+# ----------------------------------------------------
+# CONFIGURATION DE LA CARTE
+# ----------------------------------------------------
+
+# Fonction de style pour les zones climatiques
+def style_function(feature):
+    zone = feature['properties'].get('Zone')
+    couleurs = get_couleurs_zones()
+    return {
+        "fillColor": couleurs.get(zone, "#808080"),
+        "color": couleurs.get(zone, "#000000"),
+        "weight": 2,
+        "fillOpacity": 0.4,
+    }
+
+# Fonction de surlignage au survol
+def highlight_function(feature):
+    return {
+        "weight": 4,
+        "color": "yellow",
+        "fillOpacity": 0.7,
+    }
+
+
+# __file__ = chemin du fichier Python courant
+BASE_DIR = Path(__file__).resolve().parent
+filepath = BASE_DIR / "zones_climatiques.geojson"
+
+with open(filepath, 'r', encoding='utf-8') as file:
+    geojson_data = geojson.load(file)
+
 # Division de la page en deux colonnes
 col1, col2 = st.columns([1, 2]) # 1/3 pour la carte, 2/3 pour les graphiques
 
-COULEURS_ZONES = {
-    'AV_H': '#009E73', 
-    'SV_H': '#0072B2',
-    'AV_C': '#D55E00',
-    'SV_C': '#F0E442'
-}
-# Conversion approximative des noms de couleurs CSS en RGB :
-COLOR_MAP_EXPRESSION = """
-    properties.Zone === 'AV_H' ? [0, 158, 115, 150] :
-    properties.Zone === 'SV_H' ? [0, 114, 178, 150] :
-    properties.Zone === 'AV_C' ? [213, 94, 0, 150] :
-    [240, 228, 66, 150]
-"""
-
-
 # ----------------------------------------------------
-# A. PREMIÈRE COLONNE : CARTE DE LA RÉUNION (pydeck)
+# A. PREMIÈRE COLONNE : CARTE DE LA RÉUNION AVEC LES MICRO-CLIMATS
 # ----------------------------------------------------
 
 with col1:
@@ -43,58 +60,27 @@ with col1:
     st.markdown(":orange-badge[Côte sous le vent (SV_C)] :red-badge[Côte au vent (AV_C)]")
     st.markdown(":blue-badge[Hauts sous le vent (SV_H)] :green-badge[Hauts au vent (AV_H)]")
 
-    # Coordonnées centrales de La Réunion, approximativement
-    LATITUDE = -21.1076
-    LONGITUDE = 55.5361
+    # Création de la carte Folium centrée sur La Réunion
+    m = folium.Map(location=get_coordonnees_reunion(), zoom_start=9)
 
-    # Configuration de la vue de la carte
-    view_state = pdk.ViewState(
-        latitude=LATITUDE,
-        longitude=LONGITUDE,
-        zoom=8,
-        pitch=0 # angle de vue
-    )
-
-    # Couche GeoJSON pour afficher les polygones
-
-
-    # __file__ = chemin du fichier Python courant
-    BASE_DIR = Path(__file__).resolve().parent
-    filepath = BASE_DIR / "zones_climatiques.geojson"
-    print("---------", filepath)
-    with open(filepath, 'r') as file:
-        geojson_data = geojson.load(file)
-
-    geojson_layer = pdk.Layer(
-        'GeoJsonLayer',
+    # Ajout du GeoJSON
+    folium.GeoJson(
         geojson_data,
-        opacity=0.4,
-        stroked=True,
-        filled=True,
-        extruded=False,
-        # Utilisation de la NOUVELLE expression de mapping de couleur
-        #get_fill_color= COLOR_MAP_EXPRESSION,
-        get_fill_color= [0, 128, 128, 60],
-        get_line_color=[0, 128, 128, 200],
-        line_width_min_pixels=1,
-        pickable=True,
-        auto_highlight=True
-    )
-    
-    st.pydeck_chart(pdk.Deck(
-        map_style='mapbox://styles/mapbox/light-v9',
-        initial_view_state=view_state,
-        layers=[geojson_layer],
-    # NOUVEL AJOUT : Configuration du tooltip
-        # L'objet {Zone} fait référence à la propriété "Zone" du GeoJSON feature
-        tooltip={
-            "html": "<b>Micro-climat :</b> {Zone}",
-            "style": {
-                "backgroundColor": "white",
-                "color": "steelblue"
-            }
-        }
-    ))
+        name="Zones climatiques",
+        style_function=style_function,
+        highlight_function=highlight_function,
+        tooltip=folium.features.GeoJsonTooltip(
+            fields=["Zone"],
+            aliases=["Micro-climat:"]
+        )
+    ).add_to(m)
+
+    # Affichage de la carte dans Streamlit
+    # `use_container_width=True` est essentiel pour que la carte puisse s'afficher correctement
+    # en s'adaptant à la largeur de la colonne
+    st_folium(m, use_container_width=True, height=400)
+
+
 
 # ----------------------------------------------------
 # B. DEUXIÈME COLONNE : GRAPHIQUES DE SÉRIES TEMPORELLES
@@ -116,7 +102,7 @@ with col2:
         color='Z_GEO',
         title="Température Moyenne Annuelle (TMM) par micro-climat",
         labels={'TMM': 'TMM (°C)', 'year': 'Année','Z_GEO' : 'micro-climat'},
-        color_discrete_map=COULEURS_ZONES,
+        color_discrete_map=get_couleurs_zones(),
         template='plotly_white'
     )
     fig_tmm.update_layout(height=height)
@@ -131,7 +117,7 @@ with col2:
         color='Z_GEO',
         title = "Hauteur moyenne de Précipitations Annuelle (RRM) par micro-climat",
         labels={'RRMX': 'RRM (mm)', 'year': 'Année','Z_GEO' : 'micro-climat'},
-        color_discrete_map=COULEURS_ZONES,
+        color_discrete_map=get_couleurs_zones(),
         template='plotly_white'
     )
     fig_precip.update_layout(height=height)
