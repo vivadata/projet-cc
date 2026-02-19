@@ -1,5 +1,5 @@
 name: 'projet_cc'
-version: '1.0.0'
+version: '1.0.1'
 config-version: 2
 
 profile: 'projet_cc'
@@ -13,3 +13,4 @@ clean-targets: ["target", "dbt_packages"]
 models:
   projet_cc:
     +materialized: view
+    marts:
