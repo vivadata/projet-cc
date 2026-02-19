@@ -1,0 +1,30 @@
+
+version: 2
+
+models:
+  - name: mart_mensq_temperatures_sup_20deg
+    description: >
+      Table métier utilisée par le dashboard Streamlit.
+      Contient les mois avec température moyenne supérieure à 20°C.
+
+    columns:
+      - name: annee
+        tests:
+          - not_null
+
+      - name: mois
+        tests:
+          - not_null
+  - name: mart_mensq_pluviometrie_sup_100mm
+    description: >
+      Table métier utilisée par le dashboard Streamlit.
+      Contient les mois avec pluviométrie supérieure à 100mm.
+
+    columns:
+      - name: annee
+        tests:
+          - not_null
+
+      - name: mois
+        tests:
+          - not_null
