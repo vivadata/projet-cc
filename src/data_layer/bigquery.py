@@ -24,7 +24,7 @@ def run_query(sql: str):
 def get_nb_moy_nuits_sup_20deg():
     return run_query("""
                      SELECT ANNEE, AVG(moy_nuits_ge_20) as nb_moy_nuits_sup_20deg
-                     FROM `cc-reunion.data_meteofrance.int_mensq_temperatures_sup_20deg`
+                     FROM `cc-reunion.data_meteofrance.mart_mensq_temperatures_sup_20deg`
                      GROUP BY ANNEE
                      ORDER BY ANNEE ASC
     """)
