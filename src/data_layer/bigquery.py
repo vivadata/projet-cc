@@ -21,24 +21,44 @@ def run_query(sql: str):
     client = get_bq_client()
     return client.query(sql).to_dataframe()
 
+# Cette fonction est un mapping pour accéder à la table définie dans le dictionnaire TABLES.
+TABLES = {
+    "histo_simu_ann": "cc-reunion.data_meteofrance.histo_simu_ann",
+    "histo_simu_geo": "cc-reunion.data_meteofrance.histo_simu_geo",
+    "mensq_pluviometrie": "cc-reunion.data_meteofrance.stg_mensq_pluviometrie",
+    "mensq_temperatures": "cc-reunion.data_meteofrance.stg_mensq_temperatures",
+    "mensq_temperatures_sup_20deg": "cc-reunion.data_meteofrance.mart_mensq_temperatures_sup_20deg",
+    "stations": "cc-reunion.MENS_meteofrance.stations",
+    "stations_zones": "cc-reunion.MENS_meteofrance.stations_zones",
+    "Table_NBJTXS32_ANNEE": "cc-reunion.MENS_meteofrance.Table_NBJTXS32_ANNEE",
+    "Table_sim_2100": "cc-reunion.MENS_meteofrance.Table_sim_2100"
+}
+
+# Cette fonction est un raccourci pour accéder aux tables définies dans le dictionnaire TABLES.
+def t(table_name: str):
+    return TABLES[table_name]
+
 def get_nb_moy_nuits_sup_20deg():
-    return run_query("""
+    table_name = t("mensq_temperatures_sup_20deg")
+    return run_query(f"""
                      SELECT ANNEE, AVG(moy_nuits_ge_20) as nb_moy_nuits_sup_20deg
-                     FROM `cc-reunion.data_meteofrance.mart_mensq_temperatures_sup_20deg`
+                     FROM `{table_name}`
                      GROUP BY ANNEE
                      ORDER BY ANNEE ASC
     """)
 
 def get_nb_moy_nuits_sup_20deg_par_zone_par_annee():
-    return run_query("""
+    table_name_temp = t("mensq_temperatures")
+    table_name_stations_zones = t("stations_zones")
+    return run_query(f"""
         WITH nuit_par_station AS (
         SELECT
             t.NUM_POSTE,
             sz.Z_GEO,
             t.ANNEE,
             SUM(t.NBJTNS20) AS nuits_ge_20_par_station
-        FROM `cc-reunion.data_meteofrance.stg_mensq_temperatures` t
-        JOIN `cc-reunion.MENS_meteofrance.stations_zones` sz
+        FROM `{table_name_temp}` t
+        JOIN `{table_name_stations_zones}` sz
             ON t.NUM_POSTE = sz.NUM_POSTE
         GROUP BY t.NUM_POSTE, sz.Z_GEO, t.ANNEE
         ),
@@ -61,23 +81,27 @@ def get_nb_moy_nuits_sup_20deg_par_zone_par_annee():
         FROM par_zone
         ORDER BY zone_geographique, ANNEE
     """)
+
 def get_table_histo_simu():
+    table_name = t("histo_simu_ann")
     return run_query(f"""
                      SELECT *
-                     FROM `cc-reunion.data_meteofrance.histo_simu_ann`
+                     FROM `{table_name}`
     """)
 
-def get_table(tab_name):
+def get_table(table_name):
     return run_query(f"""
                      SELECT *
-                     FROM `{tab_name}`
+                     FROM `{table_name}`
     """)
 
 def get_full_table_for_cyclone():
-    return run_query("SELECT * FROM `cc-reunion.data_meteofrance.histo_simu_geo`")
+    table_name = t("histo_simu_geo")
+    return run_query(f"SELECT * FROM `{table_name}`")
 
 def get_table_pluie_extreme():
-    return run_query("""
+    table_name = t("histo_simu_geo")
+    return run_query(f"""
         WITH CTE AS (
             SELECT 
                 NBJFXI3S16X,
@@ -96,7 +120,7 @@ def get_table_pluie_extreme():
                     ELSE 'Normal'
                 END AS Forte_pluviometrie
             FROM 
-                `cc-reunion.data_meteofrance.histo_simu_geo` AS t1
+                `{table_name}` AS t1
         )
 
         SELECT
@@ -113,7 +137,7 @@ def get_table_pluie_extreme():
         FROM CTE 
     """)
 
-    #histo_ann
+#histo_ann
 # CREATE OR REPLACE TABLE `data_meteofrance.histo_simu_geo` AS (
 #   SELECT
 #     NUM_POSTE,
@@ -134,7 +158,8 @@ def get_table_pluie_extreme():
 
 
 def get_detection_precip_superieure100mm():
-    return run_query("""
+    table_name = t("mensq_pluviometrie")
+    return run_query(f"""
         WITH CTE AS (
         SELECT 
             ANNEE AS annee,
@@ -153,7 +178,7 @@ def get_detection_precip_superieure100mm():
             -- Nombre de jours > 100mm
             AVG(NBJRR100) AS Nb_Jours_Sup_100mm
 
-        FROM `cc-reunion.data_meteofrance.stg_mensq_pluviometrie`
+        FROM `{table_name}`
         GROUP BY 
             ANNEE, 
             MOIS, 
@@ -171,7 +196,9 @@ def get_detection_precip_superieure100mm():
 # --- Requête SQL ---
 # La requête SQL reste inchangée, elle récupère toutes les données annuelles agrégées par zone.
 def get_annuelles_par_zone():
-    return run_query("""
+    table_name_annee = t("Table_NBJTXS32_ANNEE")
+    stations = t("stations")
+    return run_query(f"""
         WITH CTE AS (
         SELECT
             t1.ANNEE,
@@ -180,9 +207,9 @@ def get_annuelles_par_zone():
             AVG(t1.total_jours_sup_32c_annuel) AS moyenne_jours_chauds_zone,
             COUNT(DISTINCT t1.NUM_POSTE) AS nombre_stations_incluses
         FROM 
-            `cc-reunion.MENS_meteofrance.Table_NBJTXS32_ANNEE` AS t1
+            `{table_name_annee}` AS t1
         INNER JOIN
-            `cc-reunion.MENS_meteofrance.stations` AS t2
+            `{stations}` AS t2
             ON t1.NUM_POSTE = t2.NUM_POSTE
         GROUP BY 
             t1.ANNEE,
@@ -205,7 +232,10 @@ def get_annuelles_par_zone():
 # --- Requête SQL (Version Statique 2100) ---
 # La requête a été simplifiée et corrigée pour ne calculer que la projection en 2100.
 def get_projection_2100():
-    return run_query("""
+    table_name_annee = t("Table_NBJTXS32_ANNEE")
+    stations = t("stations")
+    table_sim_2100 = t("Table_sim_2100")
+    return run_query(f"""
         WITH T_OBS_REF AS (
             -- 1. CALCUL DE LA BASELINE OBSERVÉE PAR STATION (Moyenne 1991-2020)
             SELECT
@@ -214,9 +244,9 @@ def get_projection_2100():
                 t2.Z_GEO,
                 AVG(t1.total_jours_sup_32c_annuel) AS baseline_jours_chauds_ref
             FROM
-                `cc-reunion.MENS_meteofrance.Table_NBJTXS32_ANNEE` AS t1
+                `{table_name_annee}` AS t1
             INNER JOIN
-                `cc-reunion.MENS_meteofrance.stations` AS t2 
+                `{stations}` AS t2 
                 ON t1.NUM_POSTE = t2.NUM_POSTE
             WHERE
                 t1.ANNEE BETWEEN '1991' AND '2020' 
@@ -231,7 +261,7 @@ def get_projection_2100():
                 t2.Z_GEO, 
                 AVG(t2.NBJTXS32) AS delta_jours_chauds_moyen_2100
             FROM
-                `cc-reunion.MENS_meteofrance.Table_sim_2100` AS t2 
+                `{table_sim_2100}` AS t2 
             WHERE
                 EXTRACT(YEAR FROM t2.date_2100) = 2100 
             GROUP BY 
@@ -257,7 +287,7 @@ def get_projection_2100():
         FROM
             T_PROJ_AGR AS T_PROJ
         INNER JOIN
-            `cc-reunion.MENS_meteofrance.stations` AS T_ST 
+            `{stations}` AS T_ST 
             ON T_PROJ.Z_GEO = T_ST.Z_GEO
         INNER JOIN
             T_OBS_REF 
