@@ -29,7 +29,7 @@ Le projet repose sur **BigQuery** et **dbt** pour assurer un pipeline analytique
 ## Architecture du projet
 ```
 project-root/
-├── data/ # Données brutes (à conserver ?)
+├── data/ # Données brutes
 ├── dbt/
 │ ├── models/
 │ │ ├── staging/ # Nettoyage, typage, contrôle qualité minimal
@@ -37,7 +37,7 @@ project-root/
 │ │ └── marts/ # Tables finales pour la dataviz
 │ ├── tests/ # Tests dbt (unique, not null, etc.)
 │ └── macros/ # Macros dbt personnalisées
-├── dashboard/ # Documentation du dashboard Looker Studio
+├── dashboard/ # Documentation du dashboard
 └── README.md
 ```
 
@@ -100,7 +100,7 @@ dbt debug
 
 - staging : normalisation des colonnes, typage, validation qualité
 - intermediate : agrégation, enrichissements, calcul d’indicateurs
-- marts : tables prêtes à la consommation par l’outil de dataviz (Looker Studio)
+- marts : tables prêtes à la consommation par l’outil de dataviz
 
 ## Dashboard
 
